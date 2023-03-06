@@ -6,7 +6,7 @@ public class Main {
       //  indConnection.indConnection();
 
         MongoDBConnection mdbConnection = new MongoDBConnection();
-        mdbConnection.writeCrateWeighing("1874013910091035150705222210951");
+        mdbConnection.writeCrateWeighing("1874013910191035150705222210951");
     }
 
 }

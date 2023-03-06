@@ -18,13 +18,16 @@ public class MongoDBConnection {
     private final String CONNECTION_STRING = "mongodb://localhost:27017";
     private final String DATABASE_NAME = "SF";
     private MongoCollection<Document> collectionCrateWeighing;
-    private MongoCollection<Document> collectionProducts;
+
+
+    Product product;
 
     public MongoDBConnection () {
             com.mongodb.client.MongoClient mongoClient = com.mongodb.client.MongoClients.create(CONNECTION_STRING);
             MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
+            Product product = new Product(database);
+            this.product = product;
             this.collectionCrateWeighing = database.getCollection("crateWeighing");
-            this.collectionProducts = database.getCollection("products");
     }
 
     public void writeCrateWeighing(String writeString) {
@@ -51,30 +54,12 @@ public class MongoDBConnection {
         collectionCrateWeighing.insertOne(document);
         System.out.println("Inserted document into collectionCrateWeighing. " + stockMutationCode);
 
-        if (stockMutationCode.equals("01")) {
-            addStock(productCode, weightKG, weightGR, date, time);
+        if (stockMutationCode.equals("01") || stockMutationCode.equals("02") || stockMutationCode.equals("03") || stockMutationCode.equals("04")) {
+            product.manageProduct(stockMutationCode, productCode, weightKG, weightGR, date, time);
+        } else {
+            System.out.println("Stock Mutation code is not (01,02,03,04) valid.");
         }
-
     }
-
-    public void addStock (String productCode, String weightKG, String weightGR, String date, String time) {
-
-        Bson filter = eq("productCode", productCode);
-
-        Document document = new Document("$set", new Document("date", date)
-                .append("time", time))
-                .append("$inc", new Document("weightKG", Integer.parseInt(weightKG))
-                        .append("weightGR", Integer.parseInt(weightGR)));
-        
-        collectionProducts.updateOne(filter, document);;
-        System.out.println("Inserted document into collectionProducts.");
-
-    }
-
-
-
-
-
 
     /*last line*/
 }
