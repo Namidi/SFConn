@@ -1,7 +1,9 @@
 
+import com.mongodb.ConnectionString;
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Indexes;
@@ -10,6 +12,7 @@ import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.client.model.Filters.eq;
 
@@ -23,7 +26,12 @@ public class MongoDBConnection {
     Product product;
 
     public MongoDBConnection () {
-            com.mongodb.client.MongoClient mongoClient = com.mongodb.client.MongoClients.create(CONNECTION_STRING);
+
+            MongoClientSettings settings = MongoClientSettings.builder()
+                    .applyConnectionString(new ConnectionString(CONNECTION_STRING))
+                    .applyToSocketSettings(builder -> builder.connectTimeout(10000, TimeUnit.MILLISECONDS))
+                    .build();
+            MongoClient mongoClient = MongoClients.create(settings);
             MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
             Product product = new Product(database);
             this.product = product;

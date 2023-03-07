@@ -17,6 +17,7 @@ public class Product {
 
     public void manageProduct(String stockMutationCode, String productCode, String weightKG, String weightGR, String date, String time) {
 
+        /* code 01/03 add product to stock - code 02/04 remove product from stock*/
         int mutatedWeightKG = (stockMutationCode.equals("01") || stockMutationCode.equals("03")) ? Integer.parseInt(weightKG) : Integer.parseInt(weightKG) * -1;
         int mutatedWeightGR = (stockMutationCode.equals("01") || stockMutationCode.equals("03")) ? Integer.parseInt(weightGR) : Integer.parseInt(weightGR) * -1;
 
@@ -29,7 +30,7 @@ public class Product {
 
         collectionProducts.updateOne(filter, document);
 
-        System.out.println("Inserted document into collectionProducts.");
+        System.out.println((collectionProducts.find(filter).first() != null)? "Product " + filter + " updated" : "Product " + filter + " not found");
 
     }
 
